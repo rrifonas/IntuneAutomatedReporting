@@ -352,37 +352,25 @@ $csv = Get-ChildItem '.\myreport\*.csv' | Select-Object -ExpandProperty Name
 Rename-Item -Path ".\myreport\$csv" -NewName "antivirusreport.csv"
 
 
-$connectionName = "AzureRunAsConnection"
+# Ensures you do not inherit an AzContext in your runbook
+Disable-AzContextAutosave -Scope Process
 try
 {
-    # Get the connection "AzureRunAsConnection "
-    $servicePrincipalConnection = Get-AutomationConnection -Name $connectionName         
-
-    "Logging in to Azure..."
-    Add-AzureRmAccount `
-        -ServicePrincipal `
-        -TenantId $servicePrincipalConnection.TenantId `
-        -ApplicationId $servicePrincipalConnection.ApplicationId `
-        -CertificateThumbprint $servicePrincipalConnection.CertificateThumbprint 
+    Write-Output ("Logging in to Azure...")
+    Connect-AzAccount -Identity
 }
 catch {
-    if (!$servicePrincipalConnection)
-    {
-        $ErrorMessage = "Connection $connectionName not found."
-        throw $ErrorMessage
-    } else{
-        Write-Error -Message $_.Exception
-        throw $_.Exception
-    }
+    Write-Error -Message $_.Exception
+    throw $_.Exception
 }
 
-Select-AzureRmSubscription -SubscriptionId $subscriptionID
+Select-AzSubscription -SubscriptionId $subscriptionID
 
-Set-AzureRmCurrentStorageAccount -StorageAccountName $storageAccountName -ResourceGroupName $resourceGroupName
+Set-AzCurrentStorageAccount -StorageAccountName $storageAccountName -ResourceGroupName $resourceGroupName
 
-Set-AzureStorageBlobContent -Container $ContainerName -File .\myreport\antivirusreport.csv -Blob AntivirusReport.csv -Force
+Set-AzStorageBlobContent -Container $ContainerName -File .\myreport\antivirusreport.csv -Blob AntivirusReport.csv -Force
 
 #Add snapshot file with timestamp
 $date = Get-Date -format "dd-MMM-yyyy_HH:mm"
 $timeStampFileName = "antivirusreport_" + $date + ".csv"
-Set-AzureStorageBlobContent -Container $containerSnapshotName -File '.\myreport\antivirusreport.csv' -Blob $timeStampFileName -Force 
+Set-AzStorageBlobContent -Container $containerSnapshotName -File '.\myreport\antivirusreport.csv' -Blob $timeStampFileName -Force 
