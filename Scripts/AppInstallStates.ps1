@@ -604,38 +604,26 @@ foreach($app in $Applications) {
 $outputArray | Export-Csv 'appInstallStates.csv' -NoTypeInformation -Force
 
 
-$connectionName = "AzureRunAsConnection"
+# Ensures you do not inherit an AzContext in your runbook
+Disable-AzContextAutosave -Scope Process
 try
 {
-    # Get the connection "AzureRunAsConnection "
-    $servicePrincipalConnection=Get-AutomationConnection -Name $connectionName         
-
-    "Logging in to Azure..."
-    Add-AzureRmAccount `
-        -ServicePrincipal `
-        -TenantId $servicePrincipalConnection.TenantId `
-        -ApplicationId $servicePrincipalConnection.ApplicationId `
-        -CertificateThumbprint $servicePrincipalConnection.CertificateThumbprint 
+    Write-Output ("Logging in to Azure...")
+    Connect-AzAccount -Identity
 }
 catch {
-    if (!$servicePrincipalConnection)
-    {
-        $ErrorMessage = "Connection $connectionName not found."
-        throw $ErrorMessage
-    } else{
-        Write-Error -Message $_.Exception
-        throw $_.Exception
-    }
+    Write-Error -Message $_.Exception
+    throw $_.Exception
 }
 
-Select-AzureRmSubscription -SubscriptionId $subscriptionID
+Select-AzSubscription -SubscriptionId $subscriptionID
 
-Set-AzureRmCurrentStorageAccount -StorageAccountName $storageAccountName -ResourceGroupName $resourceGroupName
+Set-AzCurrentStorageAccount -StorageAccountName $storageAccountName -ResourceGroupName $resourceGroupName
 
-Set-AzureStorageBlobContent -Container $outputContainerName -File appInstallStates.csv -Blob appInstallStates.csv -Force
+Set-AzStorageBlobContent -Container $outputContainerName -File appInstallStates.csv -Blob appInstallStates.csv -Force
 
 #Add snapshot file with timestamp
 $date = Get-Date -format "dd-MMM-yyyy_HH:mm"
 $timeStampFileName = "appInstallStates_" + $date + ".csv"
-Set-AzureStorageBlobContent -Container $snapshotsContainerName -File appInstallStates.csv -Blob $timeStampFileName -Force
+Set-AzStorageBlobContent -Container $snapshotsContainerName -File appInstallStates.csv -Blob $timeStampFileName -Force
 
