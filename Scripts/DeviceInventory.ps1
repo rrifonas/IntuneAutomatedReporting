@@ -242,9 +242,7 @@ $Resource = "deviceManagement/reports/exportJobs"
 			"SkuFamily",
 			"JoinType",
 			"PhoneNumber",
-			"JailBroken",
-			"EasActivationStatusString"
-
+			"JailBroken"
     ],
     "localization": "true",
     "ColumnName": "ui"
