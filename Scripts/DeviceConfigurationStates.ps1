@@ -16,7 +16,7 @@ $storageAccountName = Get-AutomationVariable 'storageAccountName' # Storage acco
 
 # Report specific Variables
 $outputContainerName = Get-AutomationVariable 'deviceconfigurationstatus' # active container
-$snapshotsContainerName = Get-AutomationVariable 'deviceconfigurationstatussnapshots' # historical
+#$snapshotsContainerName = Get-AutomationVariable 'deviceconfigurationstatussnapshots' # historical
 
 # Graph App Registration Creds
 
@@ -639,13 +639,13 @@ catch {
 }
 
 
-Select-AzmSubscription -SubscriptionId $subscriptionID
+Select-AzSubscription -SubscriptionId $subscriptionID
 
 Set-AzCurrentStorageAccount -StorageAccountName $storageAccountName -ResourceGroupName $resourceGroupName
 
 Set-AzStorageBlobContent -Container $outputContainerName -File DeviceConfigurationStatus.csv -Blob DeviceConfigurationStatus.csv -Force
 
 #Add snapshot file with timestamp
-$date = Get-Date -format "dd-MMM-yyyy_HH:mm"
-$timeStampFileName = "DeviceConfigurationStatus_" + $date + ".csv"
-Set-AzStorageBlobContent -Container $snapshotsContainerName -File DeviceConfigurationStatus.csv -Blob $timeStampFileName -Force
+#$date = Get-Date -format "dd-MMM-yyyy_HH:mm"
+#$timeStampFileName = "DeviceConfigurationStatus_" + $date + ".csv"
+#Set-AzStorageBlobContent -Container $snapshotsContainerName -File DeviceConfigurationStatus.csv -Blob $timeStampFileName -Force
