@@ -16,7 +16,7 @@ $storageAccountName = Get-AutomationVariable 'storageAccountName' # Storage acco
 
 # Report specific Variables
 $containerName = Get-AutomationVariable 'installedapps' # Resource group name
-$containerSnapshotName = Get-AutomationVariable 'installedappssnapshot' # Storage account name
+#$containerSnapshotName = Get-AutomationVariable 'installedappssnapshot' # Storage account name
 
 # Graph App Registration Creds
 
@@ -368,6 +368,6 @@ Set-AzCurrentStorageAccount -StorageAccountName $storageAccountName -ResourceGro
 Set-AzStorageBlobContent -Container $ContainerName -File .\myreport\AppInvRawData.csv -Blob AppInvRawData.csv -Force
 
 #Add snapshot file with timestamp
-$date = Get-Date -format "dd-MMM-yyyy_HH:mm"
-$timeStampFileName = "AppInvRawData.csv_" + $date + ".csv"
-Set-AzStorageBlobContent -Container $containerSnapshotName -File '.\myreport\AppInvRawData.csv' -Blob $timeStampFileName -Force 
+#$date = Get-Date -format "dd-MMM-yyyy_HH:mm"
+#$timeStampFileName = "AppInvRawData.csv_" + $date + ".csv"
+#Set-AzStorageBlobContent -Container $containerSnapshotName -File '.\myreport\AppInvRawData.csv' -Blob $timeStampFileName -Force 
