@@ -745,7 +745,7 @@ catch {
     throw $_.Exception
 }
 
-Select-AzmSubscription -SubscriptionId $subscriptionID
+Select-AzSubscription -SubscriptionId $subscriptionID
 
 Set-AzCurrentStorageAccount -StorageAccountName $storageAccountName -ResourceGroupName $resourceGroupName
 
